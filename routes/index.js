@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.send('hello world');
+  res.render('index', { title: 'Hwido' });
 });
 
 module.exports = router;

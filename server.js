@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const app = express();
+const passport = require('passport');
+const passportConfig = require('./passport');
 
 const server = require('http').createServer(app);
 
@@ -14,3 +16,6 @@ app.get('/', (req,res) => { // 요청패스에 대한 콜백함수를 넣어줍�
 server.listen(8080, ()=>{
     console.log('server is running on 8080')
 })
+
+app.use(passport.initialize());
+passportConfig();

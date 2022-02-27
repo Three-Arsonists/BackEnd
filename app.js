@@ -9,6 +9,22 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+const mongoose = require("mongoose");
+require("dotenv").config(); // 환경변수를 위한 dotenv
+
+const url = process.env.ATLAS_URL; // mongoDB Connect정보
+mongoose
+    .connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("Connected to MongoDB");
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

@@ -6,15 +6,15 @@ const {User} = require('../model/user');
 
 const router = express.Router();
 
+function EmailCheck(email) {
+  const check = User.find().where('email').equals(email);
+  console.log(check);
+  return;
+}
+
 // 회원가입
 router.post('/signup', function(req, res) {
   try {
-    // const EmailCheck = User.find().where('email').equals(req.body.email);
-    // console.log(EmailCheck);
-    // if(EmailCheck !== 'undefined'){
-    //   res.status(400).send('이미 사용중인 이메일입니다.');
-    // }
-    // else{
       const user = new User();
       user.userId = req.body.userId;
       user.email = req.body.email;

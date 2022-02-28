@@ -4,7 +4,7 @@ const { Strategy: LocalStrategy } = require('passport-local'); // 사용자 인�
 const { ExtractJwt, Strategy: JWTStrategy } = require('passport-jwt');
 const bcrypt = require('bcrypt'); // 해쉬된 비밀번호를 비교하기 위한 bcrypt
 
-const User = require('../model/user'); // mongoose의 user모델(User의 데이터를 조회 가능)
+const {User} = require('../model/user'); // mongoose의 user모델(User의 데이터를 조회 가능)
 // {"userId": "jihi", "password": "password"}
 const passportConfig = { usernameField:'userId', passwordField:'password'}
 

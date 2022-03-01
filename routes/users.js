@@ -1,11 +1,44 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const {User} = require('../model/user');
 
 const router = express.Router();
 
-/* GET users listing. */
-router.post('/signin', async(req, res, next) => {
+function EmailCheck(email) {
+  const check = User.find().where('email').equals(email);
+  console.log(check);
+  return;
+}
+
+// 회원가입
+router.post('/signup', function(req, res) {
+  try {
+      const user = new User();
+      user.userId = req.body.userId;
+      user.email = req.body.email;
+      user.password = req.body.password;
+      user.username = req.body.username;
+      user.birth = req.body.birth;
+
+      user.save(function(err){
+        if(err){
+          console.error(err);
+          res.send({result: 0});
+        }
+        res.send({result: 1});
+      });  
+   // }
+  }
+  catch(err) {
+    console.log(err);
+    next(err);
+  }
+});
+
+//  로그인
+router.post('/login', async(req, res, next) => {
   try {
     // index.js에서 local로 등록한 인증과정 실행
     passport.authenticate('local', (passportError, user, info) => {
@@ -28,7 +61,7 @@ router.post('/signin', async(req, res, next) => {
         );
         res.json({token});
       });
-    })(req, res);
+    })(req, res, next);
   }
   catch(error) {
     console.error(error);

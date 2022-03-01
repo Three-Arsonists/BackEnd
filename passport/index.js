@@ -2,9 +2,11 @@
 const passport = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local'); // 사용자 인증을 구현하는 모듈
 const { ExtractJwt, Strategy: JWTStrategy } = require('passport-jwt');
+const KakaoStrategy = require('passport-kakao').Strategy;
 const bcrypt = require('bcrypt'); // 해쉬된 비밀번호를 비교하기 위한 bcrypt
+require("dotenv").config();
 
-const User = require('../models/user'); // sequelize의 user모델(User의 데이터를 조회 가능)
+const {User} = require('../model/user'); // mongoose의 user모델(User의 데이터를 조회 가능)
 // {"userId": "jihi", "password": "password"}
 const passportConfig = { usernameField:'userId', passwordField:'password'}
 
@@ -56,7 +58,41 @@ const JWTVerify = async(jwtPayload, done) => {
         done(error);
     }
 }
+
+const KAKAOConfig = {
+    clientID: process.env.KAKAO_ID, // 카카오 로그인에서 발급받은 REST API KEY
+    callbackURL : '/auth/kakao/callback', // 카카오 로그인 Redirect URL 경로
+};
+
+// accessToken, refreshToken은 로그인 성공 후 카카오가 보내준 토큰, profile은 카카오가 보내준 유저 정보
+const KAKAOVerify = async (accessToken, refreshToken, profile, done) => {
+    console.log('kakao profile', profile);
+    try{
+        const exUser = await User.findOne({
+            // 카카오 플랫폼에서 로그인 했고 & snsId필드에 카카오 아이디가 일치할 경우
+            where: {snsId: profile.id, provider: 'kakao'},
+        });
+        // 이미 가입된 카카오 프로필이면 성공
+        if(exUser) {
+            done(null, exUser); // 로그인 성공
+        } else{ // 가입되지 않는 유저면 회원가입 시키고 로그인을 시킨다.
+            const newUser = await User.create({
+                email: profile._json && profile._json.kakao_account_email,
+                username: profile.displayName,
+                snsId: profile.id,
+                provider: 'kakao',
+            });
+            done(null, newUser); // 회원가입하고 로그인 인증 완료
+        }
+    }
+    catch(error) {
+        console.error(error);
+        done(error);
+    }
+};
+
 module.exports = () => {
     passport.use('local', new LocalStrategy(passportConfig, passportVerify));
     passport.use('jwt', new JWTStrategy(JWTConfig, JWTVerify));
+    passport.use('kakao', new KakaoStrategy(KAKAOConfig, KAKAOVerify));
 };

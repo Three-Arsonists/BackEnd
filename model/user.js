@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true }, // 순서대로 문자열이고 필수이며 유일해야한다
     password: { type: String, required: true, min: 8, trim: true }, // 최소 8자로 설정, trim은 공백은 제외한다는 의미
     username: String,
-    birth: { type: Date, default: Date.now }, // 생년월일을 선택안하면 가입한날이 기본값으로 들어간다.
+    regdate: { type: Date, default: Date.now }, // 생년월일을 선택안하면 가입한날이 기본값으로 들어간다.
 });
 
 userSchema.pre('save', function(next) {

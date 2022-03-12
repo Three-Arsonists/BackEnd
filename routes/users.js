@@ -6,11 +6,17 @@ const {User} = require('../model/user');
 
 const router = express.Router();
 
-function EmailCheck(email) {
-  const check = User.find().where('email').equals(email);
-  console.log(check);
-  return;
-}
+// token 인증 확인(header에 token으로 token값 보내기)
+router.post('/auth', passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+    try {
+      res.json({ result: true });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+});
+
 
 // 회원가입
 router.post('/signup', function(req, res) {
@@ -20,7 +26,7 @@ router.post('/signup', function(req, res) {
       user.email = req.body.email;
       user.password = req.body.password;
       user.username = req.body.username;
-      user.birth = req.body.birth;
+      user.regdate = req.body.regdate;
 
       user.save(function(err){
         if(err){

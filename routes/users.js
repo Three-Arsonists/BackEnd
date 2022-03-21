@@ -19,6 +19,7 @@ router.post('/auth', passport.authenticate('jwt', { session: false }),
 
 
 // 회원가입
+// 127.0.0.1:5000/users/signup
 router.post('/signup', function(req, res) {
   try {
       const user = new User();
@@ -35,7 +36,6 @@ router.post('/signup', function(req, res) {
         }
         res.send({result: 1});
       });  
-   // }
   }
   catch(err) {
     console.log(err);
@@ -44,6 +44,7 @@ router.post('/signup', function(req, res) {
 });
 
 //  로그인
+// 127.0.0.1:5000/users/login
 router.post('/login', async(req, res, next) => {
   try {
     // index.js에서 local로 등록한 인증과정 실행
